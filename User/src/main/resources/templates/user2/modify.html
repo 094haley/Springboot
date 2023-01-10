@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>user2::modify</title>
+	</head>
+<body>
+	<h3>user2 수정</h3>
+	<a th:href="@{/}">User 메인</a>
+	<a th:href="@{/user2/list}">user2 목록</a>
+	
+	<form action="/User/user2/modify" method="post">
+		<table border="1">
+			<tr>
+				<td>아이디</td>
+				<td><input type="text" name="uid" th:value="${user.uid}" readonly></td>
+			</tr>
+			<tr>
+				<td>이름</td>
+				<td><input type="text" name="name" th:value="${user.name}"></td>
+			</tr>
+			<tr>
+				<td>휴대폰</td>
+				<td><input type="text" name="hp" th:value="${user.hp}"></td>
+			</tr>
+			<tr>
+				<td>나이</td>
+				<td><input type="number" name="age" th:value="${user.age}"></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="right"><input type="submit" value="수정"></td>
+			</tr>
+
+		</table>
+	</form>
+
+</body>
+</html>
