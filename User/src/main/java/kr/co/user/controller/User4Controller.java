@@ -9,51 +9,51 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import kr.co.user.service.User3Service;
-import kr.co.user.vo.User3VO;
+import kr.co.user.service.User4Service;
+import kr.co.user.vo.User4VO;
 
 @Controller
-@RequestMapping("/user3")
-public class User3Controller {
-	
+@RequestMapping("/user4")
+public class User4Controller {
+
 	@Autowired
-	private User3Service service;
+	private User4Service service;
 	
 	@GetMapping("/list")
 	public String list(Model model) {
-		List<User3VO> users = service.selectUser3s();
+		List<User4VO> users = service.selectUser4s();
 		model.addAttribute("users", users);
-		return "/user3/list";
+		return "/user4/list";
 	}
 	
 	@GetMapping("/register")
 	public String register() {
-		return "/user3/register";
+		return "/user4/register";
 	}
 	
 	@PostMapping("/register")
-	public String register(User3VO vo) {
-		service.insertUser3(vo);
-		return "redirect:/user3/list";
+	public String register(User4VO vo) {
+		service.insertUser4(vo);
+		return "redirect:/user4/list";
 	}
 	
 	@GetMapping("/modify")
-	public String modify(Model model, String uid) {
-		User3VO user = service.selectUser3(uid);
+	public String modify(Model model, int seq) {
+		User4VO user = service.selectUser4(seq);
 		model.addAttribute("user", user);
-		return "/user3/modify";
+		return "/user4/modify";
 	}
 	
 	@PostMapping("/modify")
-	public String modify(User3VO vo) {
-		service.updateUser3(vo);
-		return "redirect:/user3/list";
+	public String modify(User4VO vo) {
+		service.updateUser4(vo);
+		return "redirect:/user4/list";
 	}
 	
 	@GetMapping("/delete")
-	public String delete(String uid) {
-		service.deleteUser3(uid);
-		return "redirect:/user3/list";
+	public String delete(int seq) {
+		service.deleteUser4(seq);
+		return "redirect:/user4/list";
 	}
 	
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.user.dao.User4DAO">
+	<insert id="insertUser4">
+		insert into `user4`(`name`, `gender`, `age`, `addr`) values (#{name}, #{gender}, #{age}, #{addr});
+	</insert>
+	<select id="selectUser4" resultType="kr.co.user.vo.User4VO">
+		select * from `user4` where `seq`=#{seq};
+	</select>
+	<select id="selectUser4s" resultType="kr.co.user.vo.User4VO">
+		select * from `user4`;
+	</select>
+	<update id="updateUser4">
+		update `user4` set 
+			`name`=#{name},
+			`gender`=#{gender},
+			`age`=#{age},
+			`addr`=#{addr}
+		where
+			`seq`=#{seq};
+	</update>
+	<delete id="deleteUser4">
+		delete from `user4` where `seq`=#{seq};
+	</delete>
+</mapper>
