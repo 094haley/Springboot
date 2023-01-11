@@ -10,7 +10,7 @@
 	<a th:href="@{/user4/list}">user4 목록</a>
 	
 	<form action="/Ch07/user4/modify" method="post">
-	<input type="hidden" name="seq" value="${user.seq}">
+	<input type="hidden" name="seq" th:value="${user.seq}">
 		<table border="1">
 			<tr>
 				<td>이름</td>

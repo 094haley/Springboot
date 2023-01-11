@@ -20,7 +20,7 @@
 			<th>휴대폰</th>
 			<th>관리</th>
 		</tr>
-			<tr>
+			<tr th:each="user:${users}">
 				<td>[[${user.uid}]]</td>
 				<td>[[${user.name}]]</td>
 				<td>[[${#strings.substring(user.birth, 2, 10)}]]</td>

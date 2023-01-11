@@ -18,15 +18,15 @@
 			<th>주소</th>
 			<th>관리</th>
 		</tr>
-			<tr>
+			<tr th:each="user:${users}">
 				<td>[[${user.seq}]]</td>
 				<td>[[${user.name}]]</td>
 				<td>[[${user.gender == 1 ? '남':'여'}]]</td>
 				<td>[[${user.age}]]</td>
 				<td>[[${user.addr}]]</td>
 				<td>
-					<a href="@{/user4/modify(seq=${user.seq})}">수정</a>
-					<a href="@{/user4/delete(seq=${user.seq})}">삭제</a>
+					<a th:href="@{/user4/modify(seq=${user.seq})}">수정</a>
+					<a th:href="@{/user4/delete(seq=${user.seq})}">삭제</a>
 				</td>
 			</tr>
 	</table>
