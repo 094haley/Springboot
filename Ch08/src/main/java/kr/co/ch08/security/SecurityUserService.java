@@ -27,13 +27,27 @@ public class SecurityUserService implements UserDetailsService{
 			throw new UsernameNotFoundException(username);
 		}
 		
+		/*
+		 * Security 기본 사용자 객체 생성
 		UserDetails userDts = User.builder()
 								.username(user.getUid())
 								.password(user.getPass())
-								.roles("MEMBER")
+								.roles("ADMIN")
 								.build();
-		
+								
 		return userDts;
+		*/
+		
+		UserDetails myUser =  MyUserDetails.builder()
+								.uid(user.getUid())
+								.pass(user.getPass())
+								.name(user.getName())
+								.grade(user.getGrade())
+								.hp(user.getHp())
+								.age(user.getAge())
+								.rdate(user.getRdate())
+								.build();
+		return myUser;
 	}
 	
 }

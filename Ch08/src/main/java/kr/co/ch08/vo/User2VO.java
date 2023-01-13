@@ -1,8 +1,12 @@
 package kr.co.ch08.vo;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +27,11 @@ public class User2VO {
 	private String uid;
 	private String pass;
 	private String name;
+	private int grade;
 	private String hp;
 	private int age;
+	
+	@CreationTimestamp
+	private LocalDateTime rdate;
 	
 }
