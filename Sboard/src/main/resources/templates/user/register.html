@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>    
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <script>
+    
+		 // 데이터 검증에 사용하는 정규표현식
+	    let regUid = /^[a-z]+[a-z0-9]{5,19}$/g;
+	    let regPass = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{5,16}$/;
+	    let regName = /^[ㄱ-힣]+$/;
+	    let regNick = /^[a-zA-Zㄱ-힣0-9][a-zA-Zㄱ-힣0-9]*$/;
+	    let regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+	    let regHp = /^01(?:0|1|[6-9])-(?:\d{4})-\d{4}$/;
+	
+	    // 폼 데이터 검증 결과 상태변수
+	    let isUidOk = false;
+	    let isPass1Ok = false;
+	    let isPass2Ok = false;
+	    let isNameOk = false;
+	    let isNickOk = false;
+	    let isEmailOk = false;
+	    let isEmailAuthOk = true;
+	    let isHpOk = false;
+   
+    	window.onload = function(){
+    		
+    		// 값이 변경되었을 때 초기화
+    		document.querySelector('input[name=uid]').addEventListener('keydown', ()=>{
+    			isUidOk = false;
+    		});
+    		
+    		document.querySelector('input[name=pass1]').addEventListener('keydown', ()=>{
+    			isPass1Ok = false;
+    		});
+    		
+    		document.querySelector('input[name=pass2]').addEventListener('keydown', ()=>{
+    			isPass2Ok = false;
+    		});
+    		
+    		document.querySelector('input[name=name]').addEventListener('keydown', ()=>{
+    			isNameOk = false;
+    		});
+    		
+    		document.querySelector('input[name=nick]').addEventListener('keydown', ()=>{
+    			isNickOk = false;
+    		});
+    		
+    		document.querySelector('input[name=email]').addEventListener('keydown', ()=>{
+    			isEmailOk = false;
+    		});
+    		
+    		document.querySelector('input[name=hp]').addEventListener('keydown', ()=>{
+    			isHpOk = false;
+    		});
+    		
+  			
+    		// 아이디 검사
+    		const btnCheckUid = document.getElementById('btnCheckUid');
+    		
+    		btnCheckUid.addEventListener('click', ()=>{
+    			
+    			let uid = document.querySelector('input[name=uid]').value;
+    			
+    			// AJAX 전송
+    			const xhr = new XMLHttpRequest();
+    			xhr.open("GET", "/Sboard/user/checkUid?uid="+uid);
+    			xhr.responseType = "json";
+    			xhr.send();
+    			
+    			xhr.onreadystatechange = function(){
+    				
+    				if(xhr.readyState == XMLHttpRequest.DONE){
+    					
+    					if(xhr.status == 200){
+    						const data = xhr.response;
+    						console.log(data);
+    						
+    						const resultUid = document.querySelector('.resultUid');
+    						
+    						if(data.result == 1){
+    							isUidOk = false;
+    							resultUid.innerText = '이미 사용중인 아이디입니다.';
+    							resultUid.style.color = 'red';
+    						}else{
+    							isUidOk = true;
+    							resultUid.innerText = '사용 가능한 아이디입니다.';
+    							resultUid.style.color = 'green';
+    						}
+    						
+    					}else{
+    						alert('Request fail...')
+    					}
+    				}
+    			}
+    		});
+    		
+    		// 비밀번호 검사
+    		const inputpass1 = document.querySelector('input[name=pass1]');
+    		inputpass1.addEventListener('focusout', ()=>{
+    			
+    			let pass1 = inputpass1.value;
+    			const resultPass1 = document.querySelector('.resultPass1');
+    			
+    			if(pass1 == ''){
+    				return;
+    			}
+    			
+    			if(!pass1.match(regPass)){
+    				isPass1Ok = false;
+					resultPass1.innerText = '숫자,영문,특수문자 포함 8자리 이상이어야 합니다.';
+					resultPass1.style.color = 'red';
+    			}else{
+    				isPass1Ok = true;
+					resultPass1.innerText = '사용 가능한 비밀번호입니다.';
+					resultPass1.style.color = 'green';
+    			}
+    			
+    		});
+    		
+    		// 이름 검사
+    		
+    		// 닉네임 검사
+    		
+    		// 이메일 검사
+    		
+    		// 휴대폰 검사
+    		
+    	}
+  
+    </script>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <h3>Board System v1.0</h3>
+        </header>
+
+        <main id="user" class="register">
+
+            <form th:action="@{/user/register}" method="post">
+                <table border="1">
+                    <caption>사이트 이용정보 입력</caption>
+                    <tr>
+                        <th>아이디</th>
+                        <td>
+                            <input type="text" name="uid" placeholder="아이디 입력"/>
+                            <button type="button" id="btnCheckUid"><img th:src="@{/img/chk_id.gif}" alt="중복확인"/></button>
+                            <span class="resultUid"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>비밀번호</th>
+                        <td>
+                            <input type="password" name="pass1" placeholder="비밀번호 입력"/>
+                            <span class="resultPass1"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>비밀번호 확인</th>
+                        <td>
+                            <input type="password" name="pass2" placeholder="비밀번호 입력 확인"/>
+                        	<span class="resultPass2"></span>
+                        </td>
+                    </tr>
+                </table>
+
+                <table border="1">
+                    <caption>개인정보 입력</caption>
+                    <tr>
+                        <th>이름</th>
+                        <td>
+                            <input type="text" name="name" placeholder="이름 입력"/>                        
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>별명</th>
+                        <td>
+                            <p>공백없이 한글, 영문, 숫자 입력</p>
+                            <input type="text" name="nick" placeholder="별명 입력"/>
+                            <button type="button"><img th:src="@{/img/chk_id.gif}" alt="중복확인"/></button>
+                            <span class="resultNick"></span>
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <th>이메일</th>
+                        <td>
+                            <input type="email" name="email" placeholder="이메일 입력"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>휴대폰</th>
+                        <td>
+                            <input type="text" name="hp" placeholder="- 포함 13자리 입력"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td>
+                            <input type="text" name="zip" placeholder="우편번호 검색" readonly/>
+                            <button type="button"><img th:src="@{/img/chk_post.gif}" alt="우편번호 찾기"/></button>
+                            <input type="text" name="addr1" placeholder="기본주소 검색" readonly/>
+                            <input type="text" name="addr2" placeholder="상세주소 입력"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <div>
+                    <a th:href="@{/user/login}" class="btnCancel">취소</a>
+                    <input type="submit" class="btnRegister" value="회원가입"/>
+                </div>
+            </form>            
+        </main>
+
+        <footer>
+            <p>ⓒCopyleft by chhak.or.kr</p>
+        </footer>    
+    </div>
+</body>
+</html>
