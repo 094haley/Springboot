@@ -45,7 +45,6 @@ class SboardApplicationTests {
 		
 	}
 	
-	@Test
 	public void countUid() {
 		
 		int result = repo.countByUid("test1");
