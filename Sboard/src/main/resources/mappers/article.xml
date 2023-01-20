@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.sboard.dao.ArticleDAO">
+
 	<insert id="insertArticle" useGeneratedKeys="true" keyProperty="no">
 		insert into `board_article` set
 			`title` = #{title},
@@ -17,12 +18,22 @@
 			`regip` = #{regip},
 			`rdate` = NOW();
 	</insert>
+	
 	<insert id="insertFile">
 		insert into `board_file` set
 			`parent` = #{parent},
 			`newName` = #{newName},
 			`oriName` = #{oriName};
 	</insert>
+		
+	<select id="selectFile" resultType="kr.co.sboard.vo.FileVO">
+		select * from `board_file` where `fno`= #{fno};
+	</select>
+	
+	<update id="updateDownload">
+		update `board_file` set `download` = `download` + 1 where `fno` = #{fno};
+	</update>
+	
 	<select id="selectArticles" resultType="kr.co.sboard.vo.ArticleVO">
 		select a.*, b.`nick` from `board_article` as a
 		join `board_user` as b
@@ -31,7 +42,72 @@
 		order by `no` desc
 		limit #{start}, 10;
 	</select>
+	
 	<select id="selectCountTotal" resultType="int">
 		select count(`no`) from `board_article` where `parent`= 0;
 	</select>
+	
+	<select id="selectArticle" resultMap="selectArticleResultMap">
+		select * from `board_article` as a
+		left join `board_file` as b
+		on a.no = b.parent
+		where `no`=#{no};
+	</select>
+	
+	<!-- 조회(select) 결과를 상세하게 매핑하기위한 사용자 정의 Map -->
+	<resultMap id="selectArticleResultMap" type="kr.co.sboard.vo.ArticleVO">
+		<id column="no" property="no"/>
+		<result column="parent" property="parent"></result>
+		<result column="comment" property="comment"></result>
+		<!-- <result column="cate" property="cate"></result>  -->
+		<result column="title" property="title"></result>
+		<result column="content" property="content"></result>
+		<result column="file" property="file"></result>
+		<!-- <result column="hit" property="hit"></result>  -->
+		<result column="uid" property="uid"></result>
+		<!-- <result column="regip" property="regip"></result> -->
+		<result column="rdate" property="rdate"></result>
+		
+		<!-- 연관관계 매핑 -->
+		<association property="fileVO" javaType="kr.co.sboard.vo.FileVO">
+			<id column="fno" property="fno"/>
+			<result column="parent" property="parent"/>
+			<result column="newName" property="newName"/>
+			<result column="oriName" property="oriName"/>
+			<result column="download" property="download"/>
+		</association>
+		
+	</resultMap>
+	
+	<update id="updateHit">
+		update `board_article` set `hit` = `hit` + 1 where `no` = #{no};
+	</update>
+	
+	<update id="updateArticle">
+		update `board_article` set 
+			`title`=#{title},
+			`content`=#{content}
+			where `no`=#{no};
+	</update>
+	
+	<delete id="deleteArticle">
+		delete from `board_article` where `no`=#{no};
+	</delete>
+	
+	<delete id="deleteFile">
+		delete from `board_file` where `parent`=#{no};
+	</delete>
+
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+

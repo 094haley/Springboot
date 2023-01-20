@@ -2,11 +2,21 @@ package kr.co.sboard.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,8 +54,18 @@ public class ArticleService {
 		return result;
 	}
 	
+	@Transactional
+	public FileVO selectFile(int fno) {
+		FileVO vo = dao.selectFile(fno);
+		dao.updateDownload(fno);
+		return vo;
+	}
+	
+	@Transactional
 	public ArticleVO selectArticle(int no) {
-		return dao.selectArticle(no);
+		ArticleVO vo = dao.selectArticle(no);
+		dao.updateHit(no);
+		return vo;
 	}
 	
 	public List<ArticleVO> selectArticles(int start) {
@@ -56,8 +76,28 @@ public class ArticleService {
 		return dao.updateArticle(vo);
 	}
 	
+	@Transactional
 	public int deleteArticle(int no) {
-		return dao.deleteArticle(no);
+		
+		// 파일 정보가져오기
+		ArticleVO vo = dao.selectArticle(no);
+		String filename = vo.getFileVO().getNewName();
+		
+		// 글 삭제
+		int result = dao.deleteArticle(no);
+		
+		// 파일이 존재하면 파일삭제
+		if(filename != null) {
+			
+			// 파일 삭제(DB)
+			dao.deleteFile(no);
+			
+			// 파일삭제(디렉터리)
+			deleteFile(filename);
+			
+		}
+				
+		return result;
 	}
 	
 	@Value("${spring.servlet.multipart.location}")
@@ -95,6 +135,38 @@ public class ArticleService {
 		
 		return fvo;
 	}
+	
+	public ResponseEntity<Resource> fileDownload(FileVO vo) throws IOException {
+		
+		Path path = Paths.get(uploadPath+vo.getNewName());
+		String contentType = Files.probeContentType(path);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition
+										.builder("attachment")
+										.filename(vo.getOriName(), StandardCharsets.UTF_8)
+										.build());;
+		
+		headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+		
+		Resource resource = new InputStreamResource(Files.newInputStream(path));
+		
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+	
+	public void deleteFile(String filename) {
+
+		//파일 경로 지정
+		String path = new File(uploadPath).getAbsolutePath();
+				
+		//현재 게시판에 존재하는 파일객체를 만듬
+		File file = new File(path, filename);
+				
+		if(file.exists()) { 
+			file.delete();
+		}
+	}
+	
 	
 	// 페이지 시작값
 	public int getLimitStart(int currentPage) {

@@ -11,7 +11,7 @@
         <header>
             <h3>Board System v1.0</h3>
             <p>
-                <span class="nick">[[${user.nick}]]</span>님 반갑습니다.
+                <span class="nick">[[${#authentication.principal.user.nick}]]</span>님 반갑습니다.
                 <a th:href="@{/user/logout}" class="logout">[로그아웃]</a>
             </p>
         </header>
@@ -29,7 +29,7 @@
                 </tr>
                 <tr th:each="article, i:${articles}">
                     <td>[[${pageStartNum - i.index}]]</td>
-                    <td><a th:href="@{/view}" th:text="|${article.title} [${article.comment}]|"></a></td>
+                    <td><a th:href="@{/view(no=${article.no})}" th:text="|${article.title} [${article.comment}]|"></a></td>
                     <td>[[${article.nick}]]</td>
                     <td>[[${article.rdate}]]</td>
                     <td>[[${article.hit}]]</td>
