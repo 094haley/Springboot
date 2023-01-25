@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{_header}"/>
+<th:block th:replace="~{board/__${group}__}"/>
+
+        <main id="board" class="write">
+            
+            <form th:action="@{/write}" method="post" enctype="multipart/form-data">
+                <!--*/
+            	<input type="hidden" name="uid" th:value="${#authentication.principal.user.uid}"/>
+            	<input type="hidden" name="regip" th:value="${#authentication.details.remoteAddress}"/>
+                */-->
+                <table border="0">
+                    <caption>글쓰기</caption>
+                    <tr>
+                        <th>제목</th>
+                        <td><input type="text" name="title" placeholder="제목을 입력하세요."/></td>
+                    </tr>
+                    <tr>
+                        <th>내용</th>
+                        <td><textarea name="content"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>파일</th>
+                        <td><input type="file" name="fname"/></td>
+                    </tr>
+                </table>
+
+                <div>
+                    <a th:href="@{/board/list(group=${group}, cate=${cate})}" class="btn btnCancel">취소</a>
+                    <input type="submit" value="작성완료" class="btn btnComplete"/>
+                </div>
+            </form>
+        </main>
+</article>
+</section>
+</div>
+
+<th:block th:replace="~{_footer}"/>
+</html>
