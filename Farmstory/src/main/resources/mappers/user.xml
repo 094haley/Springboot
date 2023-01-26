@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.farmstory.dao.UserDAO">
+	<select id="selectTerms" resultType="kr.co.farmstory.vo.TermsVO">
+		select * from `board_terms`;
+	</select>
+	<select id="selectUser" resultType="kr.co.farmstory.vo.UserVO">
+		select * from `board_user` where `uid`=#{uid};
+	</select>
+	<select id="selectUsers" resultType="kr.co.farmstory.vo.UserVO">
+		select * from `board_user`;
+	</select>
+	<insert id="insertUser">
+		insert into `board_user` set
+			`uid`=#{uid}, 
+			`pass`=#{pass}, 
+			`name`=#{name}, 
+			`nick`=#{nick}, 
+			`email`=#{email}, 
+			`hp`=#{hp}, 
+			`zip`=#{zip}, 
+			`addr1`=#{addr1}, 
+			`addr2`=#{addr2}, 
+			`regip`=#{regip}, 
+			`rdate`=now();
+	</insert>
+</mapper>

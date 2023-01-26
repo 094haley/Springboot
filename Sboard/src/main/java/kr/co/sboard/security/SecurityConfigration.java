@@ -34,6 +34,13 @@ public class SecurityConfigration {
 		.usernameParameter("uid")
 		.passwordParameter("pass");
 		
+		// 자동 로그인 설정
+		http.rememberMe()
+				.key("autoLogin")
+				.rememberMeParameter("auto")
+				.tokenValiditySeconds(259200)
+				.userDetailsService(service);
+		
 		// 로그아웃 설정
 		http.logout()
 		.invalidateHttpSession(true)

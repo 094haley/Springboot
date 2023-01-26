@@ -43,7 +43,6 @@ public class ArticleController {
 		int groups[] = service.getPageGroup(currentPage, lastPage);
 		
 		List<ArticleVO> articles = service.selectArticles(start);
-		log.info("here1 : " + articles.size());
 		
 		model.addAttribute("articles", articles);
 		model.addAttribute("currentPage", currentPage);
