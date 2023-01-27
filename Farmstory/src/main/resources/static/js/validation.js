@@ -14,8 +14,11 @@ let isPass2Ok = false;
 let isNameOk = false;
 let isNickOk = false;
 let isEmailOk = false;
-let isEmailAuthOk = true;
+let isEmailAuthOk = false;
 let isHpOk = false;
+
+// 인증번호 전송 중복클릭 방지
+let preventDoubleClick = false;
 
 window.onload = function(){
 
@@ -41,7 +44,11 @@ window.onload = function(){
     });
 
     document.querySelector('input[name=email]').addEventListener('keydown', ()=>{
+        // 이메일 인증이 완료되었을 경우 초기화x
+        if(isEmailAuthOk){return;}
         isEmailOk = false;
+        isEmailAuthOk = false;
+        preventDoubleClick = false;
     });
 
     document.querySelector('input[name=hp]').addEventListener('keydown', ()=>{
@@ -221,6 +228,9 @@ window.onload = function(){
     });
 
     // 이메일 검사
+    let emailCode = 0;
+    document.querySelector('.auth').style.display="none";
+
     const inputemail = document.querySelector('input[name=email]');
     inputemail.addEventListener('focusout', ()=>{
 
@@ -240,6 +250,39 @@ window.onload = function(){
             resultEmail.innerText = '';
         }
     });
+
+
+    const btnEmailAuth = document.getElementById('btnEmailAuth');
+            btnEmailAuth.addEventListener('click', ()=>{
+
+                let email = document.querySelector('input[name=email]').value;
+
+                // AJAX 전송
+                const xhr = new XMLHttpRequest();
+                xhr.open("Get", "/Farmstory/user/emailAuth?email="+email);
+                xhr.responseType = "json";
+                xhr.send();
+
+                xhr.onreadystatechange = function(){
+
+                    if(xhr.readyState == XMLHttpRequest.DONE){
+
+                        if(xhr.status == 200){
+
+                            const data = xhr.response;
+                            console.log(data);
+
+                            if(data.status == 1){
+                                // 메일 발송 성공
+                                emailCode = data.code;
+                            }else{
+                                // 메일 발송 실패
+                                alert('실패!');
+                            }
+                        }
+                    }
+                }
+            });
 
     // 휴대폰 검사
     const inputhp = document.querySelector('input[name=hp]');

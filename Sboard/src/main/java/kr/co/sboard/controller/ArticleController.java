@@ -69,8 +69,13 @@ public class ArticleController {
 	@GetMapping("view")
 	public String view(@RequestParam("no") int no, Model model) {
 		
+		// 게시글 가져오기
 		ArticleVO article = service.selectArticle(no);
 		model.addAttribute("article", article);
+		
+		// 조회수 +1
+		service.updateHit(no);
+		
 		return "view";
 	}
 	

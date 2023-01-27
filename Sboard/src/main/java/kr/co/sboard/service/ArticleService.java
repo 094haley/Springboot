@@ -61,11 +61,8 @@ public class ArticleService {
 		return vo;
 	}
 	
-	@Transactional
 	public ArticleVO selectArticle(int no) {
-		ArticleVO vo = dao.selectArticle(no);
-		dao.updateHit(no);
-		return vo;
+		return dao.selectArticle(no);
 	}
 	
 	public List<ArticleVO> selectArticles(int start) {
@@ -152,6 +149,10 @@ public class ArticleService {
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
 		
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+	}
+	
+	public int updateHit(int no) {
+		return dao.updateHit(no);
 	}
 	
 	public void deleteFile(String filename) {

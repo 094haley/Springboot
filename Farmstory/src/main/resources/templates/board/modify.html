@@ -4,8 +4,11 @@
 
         <main id="board" class="modify">
             
-            <form th:action="@{/modify}" method="post">
+            <form th:action="@{/board/modify}" method="post">
             	<input type="hidden" name="no" th:value="${article.no}">
+            	<input type="hidden" name="pg" th:value="${pg}">
+            	<input type="hidden" name="group" th:value="${group}">
+            	<input type="hidden" name="cate" th:value="${cate}">
                 <table border="0">
                     <caption>글수정</caption>
                     <tr>

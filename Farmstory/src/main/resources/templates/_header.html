@@ -32,7 +32,7 @@
                 <a th:href="@{/}">HOME |</a>
                 <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}">로그인 |</a>
                 <a sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃 |</a>
-                <a th:href="@{/user/terms}">회원가입 |</a>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/user/terms}">회원가입 |</a>
                 <a href="#">고객센터</a>
             </p>
             <img th:src="@{/img/head_txt_img.png}" alt="3만원 이상 무료배송"/>

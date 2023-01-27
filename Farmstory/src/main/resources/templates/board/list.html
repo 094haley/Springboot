@@ -16,7 +16,8 @@
 
                 <tr th:each="article, i:${articles}">
                     <td>[[${pageStartNum - i.index}]]</td>
-                    <td><a th:href="@{/view(no=${article.no})}" th:text="|${article.title} [${article.comment}]|"></a></td>
+                    <td><a th:href="@{/board/view(no=${article.no}, group=${group}, cate=${cate}, pg=${pg})}"
+                           th:text="|${article.title} [${article.comment}]|"></a></td>
                     <td>[[${article.nick}]]</td>
                     <td>[[${article.rdate}]]</td>
                     <td>[[${article.hit}]]</td>

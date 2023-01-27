@@ -1,25 +1,30 @@
 package kr.co.farmstory.controller;
 
+import kr.co.farmstory.service.EmailService;
 import kr.co.farmstory.service.UserService;
 import kr.co.farmstory.vo.TermsVO;
 import kr.co.farmstory.vo.UserVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Controller
 public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("user/login")
     public String login(){
@@ -68,6 +73,19 @@ public class UserController {
 
         Map<String, Integer> resultMap = new HashMap<>();
         resultMap.put("result", result);
+
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping("user/emailAuth")
+    public Map<String, Integer> EmailAuth(@RequestParam("email") String email) throws Exception {
+
+        int result[] = emailService.sendEmail(email);
+
+        Map<String, Integer> resultMap = new HashMap<>();
+        resultMap.put("status", result[0]);
+        resultMap.put("code", result[1]);
 
         return resultMap;
     }

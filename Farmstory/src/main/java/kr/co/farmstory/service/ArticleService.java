@@ -6,11 +6,22 @@ import kr.co.farmstory.vo.FileVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +32,7 @@ public class ArticleService {
     @Autowired
     private ArticleDAO dao;
 
+    @Transactional
     public int insertArticle(ArticleVO vo) {
         
         // 글 등록
@@ -36,12 +48,16 @@ public class ArticleService {
         
         return result;
     }
+
+    @Transactional
     public FileVO selectFile(int fno) {
-        return selectFile(fno);
+
+        FileVO vo = dao.selectFile(fno);
+        dao.updateDownload(fno);
+        return vo;
+
     }
-    public int selectCountTotal(String cate) {
-        return dao.selectCountTotal(cate);
-    }
+
     public ArticleVO selectArticle(int no) {
         return dao.selectArticle(no);
     }
@@ -51,17 +67,33 @@ public class ArticleService {
     public int updateArticle(ArticleVO vo) {
         return dao.updateArticle(vo);
     }
-    public int updateDownload(int fno) {
-        return dao.updateDownload(fno);
+
+    @Transactional
+    public int deleteArticle(int no){
+
+        // 파일 정보 가져오기
+        ArticleVO vo = dao.selectArticle(no);
+        String filename = vo.getFileVO().getNewName();
+
+        // 글삭제
+        int result = dao.deleteArticle(no);
+
+        // 파일이 존재하면 파일삭제
+        if(filename != null){
+
+            // 파일 삭제(DB)
+            dao.deleteFile(no);
+
+            // 파일삭제(디렉터리)
+            deleteFile(filename);
+
+        }
+
+        return result;
     }
+
     public int updateHit(int no) {
         return dao.updateHit(no);
-    }
-    public int deleteArticle(int no) {
-        return dao.deleteArticle(no);
-    }
-    public int deleteFile(int no) {
-        return dao.deleteFile(no);
     }
 
     @Value("${spring.servlet.multipart.location}")
@@ -99,6 +131,37 @@ public class ArticleService {
         return fvo;
     }
 
+    public ResponseEntity<Resource> fileDownload(FileVO vo) throws IOException{
+
+        Path path = Paths.get(uploadPath+vo.getNewName());
+        String contentType = Files.probeContentType(path);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition
+                .builder("attachment")
+                .filename(vo.getOriName(), StandardCharsets.UTF_8)
+                .build());;
+
+        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+
+        Resource resource = new InputStreamResource(Files.newInputStream(path));
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    public void deleteFile(String filename) {
+
+        //파일 경로 지정
+        String path = new File(uploadPath).getAbsolutePath();
+
+        //현재 게시판에 존재하는 파일객체를 만듬
+        File file = new File(path, filename);
+
+        if(file.exists()) {
+            file.delete();
+        }
+    }
+
     // 페이지 시작값
     public int getLimitStart(int currentPage) {
         return (currentPage - 1) * 10;
@@ -128,6 +191,10 @@ public class ArticleService {
             lastPage = (total / 10);
         }else {
             lastPage = (total / 10) + 1;
+        }
+
+        if(lastPage == 0){
+            lastPage = 1;
         }
 
         return lastPage;
