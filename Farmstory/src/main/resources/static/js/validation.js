@@ -230,32 +230,33 @@ window.onload = function(){
     // 이메일 검사
     let emailCode = 0;
     document.querySelector('.auth').style.display="none";
-
-    const inputemail = document.querySelector('input[name=email]');
-    inputemail.addEventListener('focusout', ()=>{
-
-        let email = inputemail.value;
-        const resultEmail = document.querySelector('.resultEmail');
-
-        if(email == ''){
-            return;
-        }
-
-        if(!email.match(regEmail)){
-            isEmailOk = false;
-            resultEmail.innerText = '유효한 이메일 형식이 아닙니다.';
-            resultEmail.style.color = 'red';
-        }else{
-            isEmailOk = true;
-            resultEmail.innerText = '';
-        }
-    });
-
+    const resultEmail = document.querySelector('.resultEmail');
 
     const btnEmailAuth = document.getElementById('btnEmailAuth');
-            btnEmailAuth.addEventListener('click', ()=>{
+        btnEmailAuth.addEventListener('click', ()=>{
 
-                let email = document.querySelector('input[name=email]').value;
+            let email = document.querySelector('input[name=email]').value;
+
+            if(email == ''){
+                resultEmail.innerText = '이메일을 입력하세요.';
+                resultEmail.style.color = 'red';
+                return;
+            }
+
+            // 중복 클릭 방지
+            if(preventDoubleClick){
+                return;
+            }
+
+            if(!email.match(regEmail)){
+                isEmailOk = false;
+                resultEmail.innerText = '유효한 이메일 형식이 아닙니다.';
+                resultEmail.style.color = 'red';
+            }else{
+                isEmailOk = true;
+                resultEmail.innerText = '인증코드 전송 중 입니다. 잠시만 기다려 주세요...';
+                resultEmail.style.color = 'black';
+                preventDoubleClick = true;
 
                 // AJAX 전송
                 const xhr = new XMLHttpRequest();
@@ -275,6 +276,8 @@ window.onload = function(){
                             if(data.status == 1){
                                 // 메일 발송 성공
                                 emailCode = data.code;
+                                document.querySelector('.auth').style.display="block";
+
                             }else{
                                 // 메일 발송 실패
                                 alert('실패!');
@@ -282,7 +285,34 @@ window.onload = function(){
                         }
                     }
                 }
-            });
+            }
+
+        });
+
+    //이메일 인증코드 확인
+    const btnEmailConfirm = document.getElementById('btnEmailConfirm');
+    btnEmailConfirm.addEventListener('click', ()=>{
+
+        let code = document.querySelector('input[name=auth]').value;
+
+        if(code == ''){
+            alert('이메일을 확인 후 인증코드를 입력하세요.')
+            return;
+        }
+
+        if(code == emailCode) {
+            isEmailAuthOk = true;
+            document.querySelector('input[name=email]').setAttribute('readonly', true);
+            resultEmail.innerText = '이메일이 인증되었습니다.';
+            resultEmail.style.color = 'green';
+            document.querySelector('.auth').style.display="none";
+
+        }else{
+            resultEmail.innerText = '인증코드가 틀립니다. 다시 확인해주세요.';
+            resultEmail.style.color = 'red';
+        }
+
+    });
 
     // 휴대폰 검사
     const inputhp = document.querySelector('input[name=hp]');
@@ -339,6 +369,11 @@ window.onload = function(){
         // 이메일 검증
         if (!isEmailOk) {
             alert('이메일이 유효하지 않습니다.');
+            return false;
+        }
+
+        if (!isEmailAuthOk) {
+            alert('이메일 인증이 유효하지 않습니다.');
             return false;
         }
 

@@ -23,13 +23,14 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
-    // 인증번호 생성
-    private final int code = ThreadLocalRandom.current().nextInt(100000, 1000000);
-
     @Value("${spring.mail.username}")
     private String id;
 
-    public MimeMessage createMessage(String receiver) throws MessagingException, UnsupportedEncodingException {
+
+    public int[] sendEmail(String receiver) throws MessagingException, UnsupportedEncodingException {
+
+        // 인증번호 생성
+        int code = ThreadLocalRandom.current().nextInt(100000, 1000000);
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -41,17 +42,14 @@ public class EmailService {
         message.setText(content, "UTF-8", "html");
         message.setFrom(new InternetAddress(id, "Farmstory_Admin"));
 
-        return message;
-    }
-
-    public int[] sendEmail(String receiver) {
 
         int status = 0;
 
         try{
-            MimeMessage message = createMessage(receiver);
+
             javaMailSender.send(message); // 메일 발송
             status = 1;
+
         }catch(Exception e){
             e.printStackTrace();
             status = 0;
@@ -60,10 +58,7 @@ public class EmailService {
         int result[] = {status, code};
 
         return result;
+
     }
-
-
-
-
 }
 
