@@ -1,14 +1,19 @@
 package kr.co.voard.controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +36,16 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 	private SecurityUserService securityUserService;
 	private JwtUtil jwtUtil;
+	
+	@GetMapping("/user")
+	public UserEntity user(Authentication authentication) {
+		
+		log.info("user1...");
+		MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+		
+		return myUserDetails.getUser();
+	}
+	
 	
 	@PostMapping("/user/login")
 	public Map<String, Object> login(@RequestBody UserVO vo) {
