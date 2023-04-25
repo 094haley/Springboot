@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.voard.dao.UserDAO">
+	<insert id="insertUser">
+		insert into `board_user` set
+		`uid`=#{uid}, 
+		`pass`=#{pass}, 
+		`name`=#{name}, 
+		`nick`=#{nick}, 
+		`email`=#{email}, 
+		`hp`=#{hp}, 
+		`zip`=#{zip}, 
+		`addr1`=#{addr1}, 
+		`addr2`=#{addr2}, 
+		`regip`=#{regip}, 
+		`rdate`=now();	
+	</insert>
+	<select id="selectTerms" resultType="kr.co.voard.vo.TermsVO">
+		SELECT * FROM `board_terms`;
+	</select>
+	<select id="selectUser"></select>
+	<select id="selectUsers"></select>
+	<update id="updateTerms"></update>
+	<delete id="deleteUser"></delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.voard.entity.UserEntity;
 import kr.co.voard.jwt.JwtUtil;
+import kr.co.voard.repository.UserRepo;
 import kr.co.voard.security.MyUserDetails;
 import kr.co.voard.security.SecurityUserService;
+import kr.co.voard.service.UserService;
+import kr.co.voard.vo.TermsVO;
 import kr.co.voard.vo.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,18 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 	private SecurityUserService securityUserService;
 	private JwtUtil jwtUtil;
+	private UserService service;
+	private UserRepo repo;
+	
+	@GetMapping("/user/terms")
+	public TermsVO terms() {
+		return service.selectTerms();
+	}
+	
+	@PostMapping("/user/register")
+	public void register(@RequestBody UserVO vo) {
+		service.insertUser(vo);
+	}
 	
 	@GetMapping("/user")
 	public UserEntity user(Authentication authentication) {
